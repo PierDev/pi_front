@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/pi_front/static/css/main.2b948265.css",
+    "main.js": "/pi_front/static/js/main.88ec9c60.js",
+    "index.html": "/pi_front/index.html",
+    "main.2b948265.css.map": "/pi_front/static/css/main.2b948265.css.map",
+    "main.88ec9c60.js.map": "/pi_front/static/js/main.88ec9c60.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2b948265.css",
+    "static/js/main.88ec9c60.js"
+  ]
+}
