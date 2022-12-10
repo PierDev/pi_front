@@ -1,25 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import Navbar from "./Navbar";
+import Borrowing from "./pages/Borrowing";
+import Dashboard from "./pages/Dashboard";
+import Deposit from "./pages/Deposit";
+import { Route, Routes, Navigate } from "react-router-dom"
+import { myTheme } from "./css/themes"
+import { ThemeProvider } from "@emotion/react";
+import { StarknetConfig, InjectedConnector, SequencerProvider } from '@starknet-react/core'
 
-function App() {
+
+export default function App() {
+  const connectors = [
+    new InjectedConnector({ options: { id: 'braavos' }}),
+    new InjectedConnector({ options: { id: 'argentX' }}),
+  ]
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <StarknetConfig connectors={connectors}>
+        <ThemeProvider theme = {myTheme}>
+        <Navbar/>
+        <Routes>
+          <Route path='/' element={ <Navigate to="/dashboard" /> }/>
+          <Route path = "/dashboard" element={<Dashboard/>}/>
+          <Route path = "/deposit" element={<Deposit/>}/>
+          <Route path = "/borrowing" element={<Borrowing/>}/>
+        </Routes>
+      </ThemeProvider>
+    </StarknetConfig>
+  )
 }
 
-export default App;
+

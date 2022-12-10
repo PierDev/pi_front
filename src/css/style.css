@@ -1,0 +1,10 @@
+body {
+    margin: 0px;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(to top right, #05003C, #8173ff),
+        linear-gradient(to bottom right, #05003C, #1900ff);
+    min-height: 100vh;
+    color :rgb(245, 245, 245);
+}
