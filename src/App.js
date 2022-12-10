@@ -19,6 +19,7 @@ export default function App() {
         <Navbar/>
         <Routes>
           <Route path='/' element={ <Navigate to="/dashboard" /> }/>
+          <Route path='/pi_front' element={ <Navigate to="/dashboard" /> }/>
           <Route path = "/dashboard" element={<Dashboard/>}/>
           <Route path = "/deposit" element={<Deposit/>}/>
           <Route path = "/borrowing" element={<Borrowing/>}/>
