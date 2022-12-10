@@ -5,7 +5,7 @@ import Deposit from "./pages/Deposit";
 import { Route, Routes, Navigate } from "react-router-dom"
 import { myTheme } from "./css/themes"
 import { ThemeProvider } from "@emotion/react";
-import { StarknetConfig, InjectedConnector, SequencerProvider } from '@starknet-react/core'
+import { StarknetConfig, InjectedConnector } from '@starknet-react/core'
 
 
 export default function App() {

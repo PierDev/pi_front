@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, CardHeader,  createStyles,  TextField } from '@mui/material';
+import { Button, CardHeader,   TextField } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { Box } from '@mui/system';
@@ -12,14 +12,13 @@ import ConnectWalletButton from "../wallet/ConnectWalletButton";
 import ERC20_ABI from '../constants/erc20.json'
 import POOL_ABI from '../constants/pool.json'
 import ORACLE_ABI from '../constants/oracle.json'
-import { useAccount, useContract, useStarknetCall, useNetwork, useStarknetExecute } from '@starknet-react/core'
-import { uint256ToBN , bnToUint256} from 'starknet/dist/utils/uint256';
-import { toBN } from 'starknet/utils/number';
+import { useAccount, useContract, useStarknetCall, useStarknetExecute } from '@starknet-react/core'
+import { uint256ToBN } from 'starknet/dist/utils/uint256';
 
-const eth_address = "0x066497152ef23b354d36d6ccdc4079a91c31175d013253d9a5824acee4700223"
-const usdc_address = "0x03bc367398a09d9841456f63c8ec1bdf665846281897bdebd785120ba6915ebe"
-const pool_address = "0x0766f200a452ad2ddc094da5be2be6a809156cf4a20ba0b3f8ef7e4a863037bb"
-const oracle_address = "0x7493c23e1dcc78425471687b4a7a768b3dd7949f8758a66251673938992284e";
+const eth_address = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7"
+const usdc_address = "0x005a643907b9a4bc6a55e9069c4fd5fd1f5c79a22470690f75556c4736e34426"
+const pool_address = "0x03a9c165ed3a1253202c2102f1a88e25142d3ba4649f85d73ac03ae8e6d64cca"
+const oracle_address = "0x6aee3315529466f27dfeb584a646442fdf141c13f4ec08b2a4a929bbe171636";
 const min_liquidity = 1000000
 
 const btsx = {
@@ -37,14 +36,13 @@ const btsx = {
 
 
   
-function EthBalance({ changeEthBalance }) {
-    const BN = require('bn.js');
+function EthBalance() {
     const { contract } = useContract({
         address: eth_address,
         abi: ERC20_ABI
       })
       const { address } = useAccount()
-      const { data, loading, error, refresh } = useStarknetCall({
+      const { data, loading, error } = useStarknetCall({
         contract,
         method: 'balanceOf',
         args: [address],
@@ -57,7 +55,6 @@ function EthBalance({ changeEthBalance }) {
     const bal = parseFloat(uint256ToBN(data[0]).toString())
     const dec = parseFloat("1000000000000000000")
     const final = bal/dec
-    changeEthBalance(final)
     return (
         <p>{ final }</p>
     )
@@ -66,13 +63,12 @@ function EthBalance({ changeEthBalance }) {
 
 
 function CurrentCollateral({ changeCollateral }) {
-    const BN = require('bn.js');
     const { contract } = useContract({
         address: pool_address,
         abi: POOL_ABI
       })
       const { address } = useAccount()
-      const { data, loading, error, refresh } = useStarknetCall({
+      const { data, loading, error } = useStarknetCall({
         contract,
         method: 'get_user_collateral',
         args: [address],
@@ -93,13 +89,12 @@ function CurrentCollateral({ changeCollateral }) {
 
 
 function CurrentDebt({changeDebt}) {
-    const BN = require('bn.js');
     const { contract } = useContract({
         address: pool_address,
         abi: POOL_ABI
       })
       const { address } = useAccount()
-      const { data, loading, error, refresh } = useStarknetCall({
+      const { data, loading, error } = useStarknetCall({
         contract,
         method: 'get_user_debt_value',
         args: [address],
@@ -120,13 +115,12 @@ function CurrentDebt({changeDebt}) {
 
 
 function CurrentRatio() {
-    const BN = require('bn.js');
     const { contract } = useContract({
         address: pool_address,
         abi: POOL_ABI
       })
       const { address } = useAccount()
-      const { data, loading, error, refresh } = useStarknetCall({
+      const { data, loading, error } = useStarknetCall({
         contract,
         method: 'get_user_ratio',
         args: [address],
@@ -142,14 +136,11 @@ function CurrentRatio() {
 }
 
 function FinalRatio({current_debt, collateral_amount, new_borrow}) {
-
-    const BN = require('bn.js');
     const { contract } = useContract({
         address: oracle_address,
         abi: ORACLE_ABI
       })
-      const { address } = useAccount()
-      const { data, loading, error, refresh } = useStarknetCall({
+      const { data, loading, error } = useStarknetCall({
         contract,
         method: 'eth_usd',
         args: [],
@@ -265,7 +256,6 @@ function RepayButton({repay_amount}){
 
 export default function Borrowing() {
 
-    const [eth_balance, set_eth_balance] = React.useState('0')
     const [collateral_amount, set_collateral_amount] = React.useState('0')
     const [debt_value, set_debt_value] = React.useState('0')
     const { status } = useAccount()
@@ -328,7 +318,7 @@ export default function Borrowing() {
                             <Stack spacing={2}>
                                 <Box sx={{ display: 'flex' , justifyContent: 'space-between', flexDirection: 'row' }}>
                                     <h4>Balance:</h4>
-                                    <EthBalance changeEthBalance={set_eth_balance}/>
+                                    <EthBalance/>
                                 </Box>
                                 <Box sx={{ display: 'flex' , justifyContent: 'space-between', flexDirection: 'row' }}>
                                     <h4>Current collateral: </h4>
@@ -346,6 +336,9 @@ export default function Borrowing() {
                                             onChange={(e) => handleChangeAddCollateral(e.target.value)}
                                         />
                                     </div>
+                                </Box>
+                                <Box>
+                                    <p>Warrning: You can not add more than 0.009 ETH per transaction due to an issue with wallet interfacing</p>
                                 </Box>
                                 <Box>
                                     {
@@ -378,6 +371,9 @@ export default function Borrowing() {
                                             onChange={(e) => handleChangeRemoveCollateral(e.target.value)}
                                         />
                                     </div>
+                                </Box>
+                                <Box>
+                                    <p>Warrning: You can not remove more than 0.009 ETH per transaction due to an issue with wallet interfacing</p>
                                 </Box>
                                 <Box>
                                     {

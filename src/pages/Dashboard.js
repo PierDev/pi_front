@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, CardHeader,  createStyles,  TextField } from '@mui/material';
+import { CardHeader } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { Box, Stack } from '@mui/system';
@@ -7,23 +7,21 @@ import POOL_ABI from '../constants/pool.json';
 import ERC20_ABI from '../constants/erc20.json';
 import ConnectWalletButton from "../wallet/ConnectWalletButton";
 
-import { useAccount, useContract, useStarknetCall, useNetwork, useStarknetExecute } from '@starknet-react/core'
+import { useAccount, useContract, useStarknetCall } from '@starknet-react/core'
 import { uint256ToBN } from 'starknet/dist/utils/uint256';
 
 
-const pool_address = "0x0766f200a452ad2ddc094da5be2be6a809156cf4a20ba0b3f8ef7e4a863037bb";
-const pi_token_address = "0x5d8746c4d01fd6fd48fff911d0deda77826398be65b8a08441895b71ad2a716";
-const oracle_address = "0x7493c23e1dcc78425471687b4a7a768b3dd7949f8758a66251673938992284e";
+const pool_address = "0x03a9c165ed3a1253202c2102f1a88e25142d3ba4649f85d73ac03ae8e6d64cca";
+const pi_token_address = "0x78fb14cdcfed40c2472fb83043889abda8d3152dd7bd5deb84f46dd75d99cf2";
 const min_liquidity = 1000000
 
 
 function TotalSupplied({ ChangeTotalSupplied }) {
-    const BN = require('bn.js');
     const { contract } = useContract({
         address: pool_address,
         abi: POOL_ABI
       })
-      const { data, loading, error, refresh } = useStarknetCall({
+      const { data, loading, error } = useStarknetCall({
         contract,
         method: 'get_total_usdc_deposit',
         args: [],
@@ -52,12 +50,11 @@ function CurrentAPR({ current_rate, total_borrow, total_supply }) {
 
 
 function TotalBorrowed({ ChangeTotalBorrow }) {
-    const BN = require('bn.js');
     const { contract } = useContract({
         address: pool_address,
         abi: POOL_ABI
       })
-      const { data, loading, error, refresh } = useStarknetCall({
+      const { data, loading, error } = useStarknetCall({
         contract,
         method: 'get_total_usdc_due',
         args: [],
@@ -77,12 +74,11 @@ function TotalBorrowed({ ChangeTotalBorrow }) {
 }
 
 function CurrentRate({ ChangeCurrentRate }) {
-    const BN = require('bn.js');
     const { contract } = useContract({
         address: pool_address,
         abi: POOL_ABI
       })
-      const { data, loading, error, refresh } = useStarknetCall({
+      const { data, loading, error } = useStarknetCall({
         contract,
         method: 'get_current_rate',
         args: [],
@@ -101,12 +97,11 @@ function CurrentRate({ ChangeCurrentRate }) {
 }
 
 function ReserveUsage() {
-  const BN = require('bn.js');
   const { contract } = useContract({
       address: pool_address,
       abi: POOL_ABI
     })
-    const { data, loading, error, refresh } = useStarknetCall({
+    const { data, loading, error } = useStarknetCall({
       contract,
       method: 'get_reserve_usage',
       args: [],
@@ -124,13 +119,12 @@ function ReserveUsage() {
 }
 
 function CurrentDeposit() {
-    const BN = require('bn.js');
     const { contract } = useContract({
         address: pool_address,
         abi: POOL_ABI
       })
       const { address } = useAccount()
-      const { data, loading, error, refresh } = useStarknetCall({
+      const { data, loading, error } = useStarknetCall({
         contract,
         method: 'get_user_deposit_value',
         args: [address],
@@ -149,13 +143,12 @@ function CurrentDeposit() {
 }
 
 function PiBalance() {
-    const BN = require('bn.js');
     const { contract } = useContract({
         address: pi_token_address,
         abi: ERC20_ABI
       })
       const { address } = useAccount()
-      const { data, loading, error, refresh } = useStarknetCall({
+      const { data, loading, error } = useStarknetCall({
         contract,
         method: 'balanceOf',
         args: [address],
@@ -176,13 +169,12 @@ function PiBalance() {
 
 
 function CurrentCollateral() {
-    const BN = require('bn.js');
     const { contract } = useContract({
         address: pool_address,
         abi: POOL_ABI
       })
       const { address } = useAccount()
-      const { data, loading, error, refresh } = useStarknetCall({
+      const { data, loading, error } = useStarknetCall({
         contract,
         method: 'get_user_collateral',
         args: [address],
@@ -202,13 +194,12 @@ function CurrentCollateral() {
 
 
 function CurrentDebt() {
-    const BN = require('bn.js');
     const { contract } = useContract({
         address: pool_address,
         abi: POOL_ABI
       })
       const { address } = useAccount()
-      const { data, loading, error, refresh } = useStarknetCall({
+      const { data, loading, error } = useStarknetCall({
         contract,
         method: 'get_user_debt_value',
         args: [address],
@@ -228,13 +219,12 @@ function CurrentDebt() {
 
 
 function CurrentRatio() {
-    const BN = require('bn.js');
     const { contract } = useContract({
         address: pool_address,
         abi: POOL_ABI
       })
-      const { address } = useAccount()
-      const { data, loading, error, refresh } = useStarknetCall({
+      const { address, status } = useAccount()
+      const { data, loading, error } = useStarknetCall({
         contract,
         method: 'get_user_ratio',
         args: [address],
@@ -260,20 +250,9 @@ export default function Dashboard() {
 
 
     const [current_rate, set_current_rate] = React.useState('0')
-    const handleCurrentRate = (newValue) => {
-        set_current_rate(newValue);
-    };
-
-
     const [total_borrow, set_total_borrow] = React.useState('0')
-    const handleTotalBorrow = (newValue) => {
-        set_total_borrow(newValue);
-    };
-
     const [total_supply, set_total_supply] = React.useState('0')
-    const handleTotalSupply = (newValue) => {
-        set_total_supply(newValue);
-    };
+
 
     return (
         <Box sx={{ display: 'flex' , justifyContent: 'center', flexDirection: 'column'}}>
